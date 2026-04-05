@@ -201,7 +201,7 @@ void DrawGame(Player player, Asteroid asteroid, Shot shot, Texture2D ship, GameS
 }
 
 // Unload resources
-void UnloadGame(Texture2D ship) 
+void UnloadGame(Texture2D ship, Texture2D gamebg) 
 {
     UnloadTexture(ship); //unloads png to stop memory leaks 
     UnloadTexture(gamebg);
@@ -225,7 +225,8 @@ void UpdateGameScreen(GameScreen *screen, float *logoTimer, Player *player)
                 *screen = GAMEPLAY;
             }
             player->score = 0; //This resets the players score so when starting the game it is 0 and when replaying the game it is also 0
-            player->lifes = PLAYER_LIFES; 
+            player->lifes = PLAYER_LIFES;
+            player->position = (Vector2){SCREENWIDTH/2, SCREENHEIGHT - 100};
             break;
 
         case GAMEPLAY:
@@ -246,6 +247,11 @@ void UpdateGameScreen(GameScreen *screen, float *logoTimer, Player *player)
             if (IsKeyPressed(KEY_ENTER)) //Restarts the game if enter is pressed
             {
                 *screen = TITLE; 
+            }
+            if(IsKeyPressed(KEY_SPACE))
+            {
+                Unloadgame(ship, gamebg);//Unloads the png's used
+                CloseWindow(); //Closes the window
             }
             break;
 
@@ -292,6 +298,7 @@ void DrawScreen(GameScreen screen, Player player, Asteroid asteroid, Shot shot, 
             DrawText("GAME OVER", SCREENWIDTH/2 - 180, SCREENHEIGHT/2 - 60, 60, RED); //Draws the game over screen
             DrawText(TextFormat("Final Score: %d", player.score), SCREENWIDTH/2 - 180, SCREENHEIGHT/2 + 50, 40, LIGHTGRAY);
             DrawText("Press ENTER to go to Title", SCREENWIDTH/2 - 180, SCREENHEIGHT/2 + 100, 25, LIGHTGRAY);
+            DrawText("Press SPACE to exit", SCREENWIDTH/2 - 180, SCREENHEIGHT/2 + 140, 25, LIGHTGRAY);
             break;
 
         default:
@@ -331,7 +338,5 @@ int main()
         EndDrawing();
     }
     
-    UnloadGame(ship); //Unloads the png's used and then closes the window
-    CloseWindow();
     return 0;
 }
